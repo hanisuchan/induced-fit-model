@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f3;color:#203a35;font-family:Arial,sans-serif}
+.app{max-width:1250px;margin:auto;padding:24px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.eyebrow{font-size:11px;letter-spacing:2px;font-weight:800;color:#60867a}
+h1{font-size:clamp(23px,4vw,34px);margin:8px 0}
+.subtitle{color:#6c807a;font-size:14px}
+.tag{background:#e0ece5;border-radius:20px;padding:9px 14px;font-weight:700;font-size:12px;white-space:nowrap}
+.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:18px}
+.card{background:white;border:1px solid #dce7e1;border-radius:22px;box-shadow:0 5px 20px #23443708}
+.visual{padding:16px;overflow:hidden}
+.canvas-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.badge{background:#e7f0ff;color:#356397;padding:8px 12px;border-radius:9px;font-size:12px;font-weight:bold}
+svg{width:100%;height:auto;display:block;overflow:visible}
+#substrate,#productA,#productB,#newSubstrate{transition:transform 1s ease,opacity .6s}
+.svg-label{font-family:Arial,sans-serif;fill:#203d4b;font-weight:bold;font-size:17px}
+.svg-small{font-family:Arial,sans-serif;fill:#506d78;font-size:14px}
+#callouts{transition:opacity .3s}
+.legend{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;font-size:12px;color:#637a74;padding:9px 0}
+.legend span{display:flex;align-items:center;gap:7px}
+.swatch{width:12px;height:12px;border-radius:4px}
+.explanation{display:flex;flex-direction:column;padding:24px}
+.counter{font-size:13px;font-weight:bold;letter-spacing:1px;color:#64847b}
+h2{font-size:25px;line-height:1.2;margin:14px 0 16px}
+.keypoint{font-size:19px;line-height:1.6;margin:0 0 20px;color:#274840}
+strong{color:#207a62}
+.teacher{margin-top:auto;background:#f0f6f2;border-left:4px solid #88b5a1;padding:16px;border-radius:8px;line-height:1.6;font-size:14px}
+.teacher-label{font-size:11px;font-weight:800;letter-spacing:1px;color:#64847b;margin-bottom:7px}
+.progress{display:flex;gap:5px;margin:20px 0 12px}
+.bar{height:5px;flex:1;background:#dce5e0;border-radius:6px}
+.bar.done{background:#509982}
+.bar.active{background:#e8ad63}
+.controls{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:16px}
+.group{display:flex;gap:8px;flex-wrap:wrap}
+button{border:1px solid #cdded5;background:#fff;color:#35584d;font-family:inherit;font-weight:700;padding:12px 16px;border-radius:11px;cursor:pointer;font-size:14px}
+button:hover{background:#eaf4ee}
+button:disabled{opacity:.35;cursor:default}
+button.primary{background:#317b65;color:white;border-color:#317b65}
+button.primary:hover{background:#256653}
+.steps{display:grid;grid-template-columns:repeat(9,1fr);gap:7px;margin-top:18px}
+.step{padding:10px 4px;background:#fff;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:6px;line-height:1.3;min-height:68px}
+.step b{width:25px;height:25px;border-radius:50%;background:#edf3ef;display:grid;place-items:center;font-size:13px}
+.step.current{border:2px solid #317b65;background:#e8f3ec;color:#215a48}
+.step.current b{background:#317b65;color:white}
+.hint{color:#768a82;font-size:12px;text-align:center;margin-top:16px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.app{padding:12px}.steps{grid-template-columns:repeat(3,1fr)}.explanation{padding:18px}.tag{display:none}}
+:fullscreen{background:#f1f5f3;overflow:auto}
+</style>
+</head>
+<body>
+<main class="app" id="app">
+<header>
+<div>
+<div class="eyebrow">BIOLOGY · INTERACTIVE DEMONSTRATION</div>
+<h1>The Induced Fit Model</h1>
+<div class="subtitle">Mechanism of enzyme action · Koshland (1959)</div>
+</div>
+<div class="tag">BYURnotes · SB025</div>
+</header>
+
+<div class="layout">
+<section class="card visual">
+<div class="canvas-top">
+<span class="badge" id="phase">Before binding</span>
+<button onclick="toggleFullscreen()" title="Full screen" style="padding:8px 11px">⛶ Full screen</button>
+</div>
+<svg viewBox="0 0 768 430" role="img" aria-label="Animated enzyme and substrate interaction">
+<defs>
+<linearGradient id="enzymeColor" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#a7c9f3"/>
+<stop offset=".6" stop-color="#6598d6"/>
+<stop offset="1" stop-color="#467ebd"/>
+</linearGradient>
+<linearGradient id="substrateColor" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#ffc58e"/>
+<stop offset="1" stop-color="#ee9154"/>
+</linearGradient>
+<filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+<feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#27476a" flood-opacity=".13"/>
+</filter>
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0,0 L8,4 L0,8 Z" fill="#567c79"/>
+</marker>
+</defs>
+
+<rect x="8" y="14" width="752" height="405" rx="24" fill="#f7fafc"/>
+<g opacity=".35" fill="#d5e5ed">
+<circle cx="75" cy="95" r="4"/><circle cx="680" cy="115" r="6"/>
+<circle cx="705" cy="330" r="4"/><circle cx="125" cy="365" r="5"/>
+<circle cx="580" cy="60" r="3"/><circle cx="65" cy="260" r="3"/>
+</g>
+
+<g id="complexOutline" opacity="0" style="transition:opacity .5s">
+<rect x="106" y="118" width="556" height="282" rx="95" fill="none" stroke="#38977c" stroke-width="3" stroke-dasharray="9 7"/>
+</g>
+<path id="enzyme" fill="url(#enzymeColor)" stroke="#3e75b3" stroke-width="3" stroke-linejoin="round" filter="url(#shadow)"/>
+<path id="cavityHighlight" fill="none" stroke="#236f67" stroke-width="5" stroke-linecap="round" opacity="0" style="transition:opacity .45s"/>
+
+<g id="substrate">
+<path id="substrateShape" d="M320 160 Q320 138 344 138 L424 138 Q448 138 448 160 C448 180 440 212 420 212 L405 212 Q405 228 390 228 L373 228 Q373 214 360 214 L352 214 C331 214 320 188 320 160 Z" fill="url(#substrateColor)" stroke="#c9783e" stroke-width="2.7" filter="url(#shadow)"/>
+<path d="M384 139 L384 227" stroke="#b96d3a" stroke-width="2" opacity=".32" stroke-dasharray="4 4"/>
+</g>
+
+<g id="productA" opacity="0">
+<path d="M320 160 Q320 138 344 138 L384 138 L384 228 L373 228 Q373 214 360 214 L352 214 C331 214 320 188 320 160 Z" fill="#ffbd75" stroke="#c97b39" stroke-width="2.5" stroke-linejoin="round"/>
+</g>
+<g id="productB" opacity="0">
+<path d="M384 138 L424 138 Q448 138 448 160 C448 180 440 212 420 212 L405 212 Q405 228 390 228 L384 228 Z" fill="#f2a76a" stroke="#c9783e" stroke-width="2.5" stroke-linejoin="round"/>
+</g>
+<g id="newSubstrate" opacity="0">
+<use href="#substrateShape"/>
+</g>
+
+<g id="reactionFlash" opacity="0" style="transition:opacity .4s">
+<path d="M389 150 L371 180 L384 180 L376 207 L401 171 L387 171 Z" fill="#fff7b9" stroke="#d6a243" stroke-width="2"/>
+<g stroke="#e6b653" stroke-width="3" stroke-linecap="round">
+<path d="M359 125 L350 114 M408 125 L416 114 M384 122 V108 M464 175 L477 175 M302 175 L289 175"/>
+</g>
+</g>
+<g id="callouts"></g>
+<text x="383" y="411" text-anchor="middle" class="svg-small">Schematic illustration · not to scale</text>
+</svg>
+<div class="legend">
+<span><i class="swatch" style="background:#6598d6"></i>Enzyme</span>
+<span><i class="swatch" style="background:#ee995a"></i>Substrate</span>
+<span><i class="swatch" style="background:#f8bd76"></i>Products</span>
+</div>
+</section>
+
+<section class="card explanation" aria-live="polite">
+<div class="counter" id="counter">STEP 01 / 09</div>
+<h2 id="title"></h2>
+<p class="keypoint" id="keypoint"></p>
+<div class="teacher">
+<div class="teacher-label">🎙️ TEACHER'S EXPLANATION</div>
+<div id="teacherText"></div>
+</div>
+<div class="progress" id="progress"></div>
+</section>
+</div>
+
+<div class="controls">
+<div class="group">
+<button id="prev" onclick="goTo(step-1)">← Previous</button>
+<button class="primary" id="next" onclick="goTo(step+1)">Next step →</button>
+</div>
+<div class="group">
+<button id="play" onclick="togglePlay()">▶ Auto play</button>
+<button onclick="resetDemo()">↺ Restart</button>
+</div>
+</div>
+<nav class="steps" id="steps" aria-label="Jump to a step"></nav>
+<div class="hint">Click Next step to advance, or use your ← → arrow keys. Pause at any stage to explain.</div>
+</main>
+
+<script>
+const slides=[
+{
+short:"Flexible site",
+phase:"Before binding",
+title:"The active site is flexible",
+point:"The <strong>conformation of the active site is not exactly complementary</strong> to the shape of the substrate.",
+teacher:"Look at the gap between the substrate's shape and the active site. Unlike the lock-and-key model, they do not fit perfectly initially. The enzyme can change its shape slightly.",
+fit:0,sub:[0,-90]
+},
+{
+short:"Binding",
+phase:"Initial binding",
+title:"The substrate binds",
+point:"The <strong>substrate binds to the active site</strong> of the enzyme.",
+teacher:"The substrate enters and interacts with the active site. However, the fit is not yet perfect. Notice the small gaps around the substrate.",
+fit:0,sub:[0,0]
+},
+{
+short:"Shape change",
+phase:"Induced fit",
+title:"Binding induces a small change",
+point:"The binding induces a <strong>slight change in the conformation of the active site</strong> of the enzyme.",
+teacher:"Watch the blue enzyme move around the orange substrate. The binding causes the flexible active site to adjust its shape.",
+fit:.65,sub:[0,0]
+},
+{
+short:"Precise fit",
+phase:"Precise binding",
+title:"The substrate fits precisely",
+point:"The <strong>substrate fits precisely</strong> into the active site of the enzyme.",
+teacher:"Now the gaps are closing. The substrate fits snugly into the enzyme because the active site has adjusted its conformation.",
+fit:1,sub:[0,0]
+},
+{
+short:"Complementary",
+phase:"Complementary shapes",
+title:"The shapes are fully complementary",
+point:"The active site now becomes <strong>fully complementary to the shape of the substrate</strong>.",
+teacher:"Follow the highlighted boundary. The shape of the active site now closely matches the bound substrate. This is the complementary fit shown in the induced fit model.",
+fit:1,sub:[0,0]
+},
+{
+short:"ES complex",
+phase:"Enzyme–substrate complex",
+title:"Formation of the ES complex",
+point:"An <strong>enzyme–substrate complex</strong> is formed.",
+teacher:"The enzyme and the bound substrate together form the enzyme–substrate complex. This positions the substrate appropriately for catalysis.",
+fit:1,sub:[0,0]
+},
+{
+short:"Catalysis",
+phase:"Catalytic reaction",
+title:"The enzyme catalyses the reaction",
+point:"This enables the enzyme to <strong>carry out its catalytic reaction</strong>.",
+teacher:"The enzyme lowers the activation energy. In this example, it catalyses the breaking of a bond within the substrate, producing two smaller products.",
+fit:1,sub:[0,0]
+},
+{
+short:"Release",
+phase:"Product release",
+title:"Products are formed and released",
+point:"The <strong>products are formed and released</strong> from the active site.",
+teacher:"The substrate has been converted into products. Notice the two smaller molecules leaving the active site. The enzyme itself is not consumed.",
+fit:.55,sub:[0,0]
+},
+{
+short:"Reset",
+phase:"Ready for another reaction",
+title:"The enzyme returns to its original shape",
+point:"The active site changes back to its <strong>original conformation</strong> and is free to bind another substrate.",
+teacher:"Compare this with the first step. The enzyme is available again and can catalyse another reaction. The whole cycle can repeat.",
+fit:0,sub:[0,-90]
+}
+];
+
+let step=0, currentFit=0, animationFrame=0, timer=null;
+const $=id=>document.getElementById(id);
+
+const open=[302,160,302,198,315,235,347,235,359,235,370,235,370,248,390,248,411,248,411,232,427,232,454,232,464,195,464,160];
+const closed=[320,160,320,188,331,214,352,214,360,214,373,214,373,228,390,228,405,228,405,212,420,212,440,212,448,180,448,160];
+
+function geometry(f){
+const a=open.map((v,i)=>v+(closed[i]-v)*f);
+return {
+cavity:`M ${a[0]} ${a[1]} C ${a.slice(2,8).join(" ")} L ${a[8]} ${a[9]} Q ${a.slice(10,14).join(" ")} L ${a[14]} ${a[15]} Q ${a.slice(16,20).join(" ")} L ${a[20]} ${a[21]} C ${a.slice(22,28).join(" ")}`,
+enzyme:`M115 271 C104 226 130 186 181 164 C215 149 260 144 ${a[0]} ${a[1]} C ${a.slice(2,8).join(" ")} L ${a[8]} ${a[9]} Q ${a.slice(10,14).join(" ")} L ${a[14]} ${a[15]} Q ${a.slice(16,20).join(" ")} L ${a[20]} ${a[21]} C ${a.slice(22,28).join(" ")} C510 141 565 157 604 190 C656 230 657 279 622 310 C587 340 571 374 518 375 C472 376 442 357 401 376 C350 399 313 376 283 358 C244 334 201 364 161 338 C130 319 116 298 115 271 Z`
+};
+}
+
+function draw(f){
+let g=geometry(f);
+$("enzyme").setAttribute("d",g.enzyme);
+$("cavityHighlight").setAttribute("d",g.cavity);
+currentFit=f;
+}
+function animateFit(target){
+cancelAnimationFrame(animationFrame);
+let start=currentFit,t0=performance.now();
+function frame(t){
+let p=Math.min((t-t0)/950,1);
+let ease=p*p*(3-2*p);
+draw(start+(target-start)*ease);
+if(p<1)animationFrame=requestAnimationFrame(frame);
+}
+animationFrame=requestAnimationFrame(frame);
+}
+
+function label(x,y,text,size=17,anchor="start"){
+return `<text x="${x}" y="${y}" text-anchor="${anchor}" class="svg-label" style="font-size:${size}px">${text}</text>`;
+}
+function line(x1,y1,x2,y2,arrow=false){
+return `<path d="M${x1} ${y1} L${x2} ${y2}" fill="none" stroke="#567c79" stroke-width="2" ${arrow?'marker-end="url(#arrow)"':''}/>`;
+}
+function captions(i){
+let c=label(203,285,"Enzyme",22,"middle");
+if(i===0){
+c+=label(384,35,"Substrate",17,"middle")+line(384,41,384,52);
+c+=label(530,90,"Flexible active site")+line(537,99,452,175,true);
+c+=`<path d="M384 117 V145" fill="none" stroke="#567c79" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arrow)"/>`;
+}else if(i===1){
+c+=label(384,112,"Substrate binds",18,"middle")+line(384,118,384,136);
+c+=label(520,105,"Still a small gap")+line(518,113,452,194,true);
+}else if(i===2){
+c+=label(384,107,"Slight conformational change",18,"middle");
+c+=`<path d="M279 190 H310 M490 190 H458" stroke="#267c6c" stroke-width="3" marker-end="url(#arrow)" fill="none"/>`;
+}else if(i===3){
+c+=label(384,104,"Precise fit",20,"middle")+line(384,112,384,136);
+}else if(i===4){
+c+=label(384,82,"Fully complementary shapes",19,"middle");
+c+=line(480,93,441,202,true);
+}else if(i===5){
+c+=label(384,93,"Enzyme–substrate complex",19,"middle")+line(384,100,384,116);
+}else if(i===6){
+c+=label(384,89,"Catalytic reaction",20,"middle");
+c+=label(550,115,"Bond breaks",16)+line(543,121,404,171,true);
+}else if(i===7){
+c+=label(384,38,"Products released",20,"middle");
+c+=`<path d="M340 153 L288 98 M428 153 L480 98" fill="none" stroke="#567c79" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>`;
+}else if(i===8){
+c+=label(384,34,"New substrate",17,"middle")+line(384,39,384,50);
+c+=label(516,102,"Original conformation",16)+line(526,110,454,181,true);
+}
+return c;
+}
+
+function render(animate=true){
+const s=slides[step];
+$("title").textContent=s.title;
+$("keypoint").innerHTML=s.point;
+$("teacherText").textContent=s.teacher;
+$("phase").textContent=s.phase;
+$("counter").textContent=`STEP ${String(step+1).padStart(2,"0")} / 09`;
+$("substrate").style.transform=`translate(${s.sub[0]}px,${s.sub[1]}px)`;
+$("substrate").style.opacity=step>=7?"0":"1";
+$("productA").style.opacity=step===7?"1":"0";
+$("productB").style.opacity=step===7?"1":"0";
+$("productA").style.transform=step===7?"translate(-105px,-103px)":"translate(0px,0px)";
+$("productB").style.transform=step===7?"translate(105px,-103px)":"translate(0px,0px)";
+$("newSubstrate").style.opacity=step===8?"1":"0";
+$("newSubstrate").style.transform="translate(0px,-90px)";
+$("cavityHighlight").style.opacity=step===4?"1":"0";
+$("complexOutline").style.opacity=step===5?"1":"0";
+$("reactionFlash").style.opacity=step===6?"1":"0";
+$("callouts").innerHTML=captions(step);
+if(animate)animateFit(s.fit);else draw(s.fit);
+$("prev").disabled=step===0;
+$("next").textContent=step===8?"↺ Repeat cycle":"Next step →";
+$("progress").innerHTML=slides.map((_,i)=>`<div class="bar ${i<step?"done":i===step?"active":""}"></div>`).join("");
+$("steps").innerHTML=slides.map((x,i)=>`<button class="step ${i===step?"current":""}" onclick="goTo(${i})" aria-current="${i===step?'step':'false'}"><b>${i+1}</b>${x.short}</button>`).join("");
+}
+function goTo(i){
+step=i>=slides.length?0:Math.max(0,i);
+render();
+}
+function stopPlay(){
+clearInterval(timer);timer=null;
+$("play").textContent="▶ Auto play";
+}
+function togglePlay(){
+if(timer){stopPlay();return;}
+if(step===8)goTo(0);
+$("play").textContent="Ⅱ Pause";
+timer=setInterval(()=>{
+if(step===8){stopPlay();return;}
+goTo(step+1);
+},5000);
+}
+function resetDemo(){stopPlay();goTo(0);}
+function toggleFullscreen(){
+if(document.fullscreenElement){document.exitFullscreen?.();}
+else $("app").requestFullscreen?.().catch(()=>{});
+}
+document.addEventListener("keydown",e=>{
+if(e.key==="ArrowRight"){e.preventDefault();goTo(step+1);}
+if(e.key==="ArrowLeft"){e.preventDefault();goTo(step-1);}
+});
+render(false);
+</script>
+</body>
+</html>
